@@ -1,3 +1,4 @@
+// Graph.c - Implementation of Graph class
 #include <octave/oct.h>
 #include <iostream>
 #include <vector>
@@ -9,6 +10,12 @@ using namespace std;
 
 typedef map<int, vector<int>* >::iterator graph_itor;
 
+// Graph constructor. Takes in a matrix of adjacency rules and
+// builds the adjacency list for the given graph. A matrix of m rows
+// is interpreted as a graph with m edges, specified by the first two
+// entries in each row. The matrix adj_rules passed to this constructor
+// must have dimensions m * 2 for an unweighted graph or dimensions
+// m * 3 for a weighted graph.
 Graph::Graph (const Matrix &adj_rules) {
   map<int, vector<int>* > *thisMap = new map<int, vector<int>* >;
   this->adj_list = thisMap;
@@ -31,11 +38,10 @@ Graph::Graph (const Matrix &adj_rules) {
       (*adj_list)[tail_node] = new_list;
     }
   }
-  this->order = this->adj_list->size();  
+  this->order = this->adj_list->size();
 }
 
 void Graph::print_graph () {
-
   graph_itor node_itor = this->adj_list->begin();
   for (; node_itor != this->adj_list->end(); ++node_itor) {
     cout << node_itor->first <<": ";
