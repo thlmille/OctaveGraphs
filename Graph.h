@@ -6,7 +6,8 @@
 class Graph {
  private: 
   int order;
-  map<int, vector<int> > adj_list;
+  map<int, vector<int>* > *adj_list;
  public:
-  Graph(const Matrix &adj_rules);
+  Graph (const Matrix &adj_rules);
+  void print_graph ();
 };
