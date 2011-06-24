@@ -6,6 +6,7 @@
 
 #include <octave/oct.h>
 #include <iostream>
+#include <string>
 #include <vector>
 #include <map>
 
@@ -15,5 +16,5 @@ class Graph {
   map<int, vector<int>* > *adj_list;
  public:
   Graph (const Matrix &adj_rules);
-  void print_graph ();
+  string print_graph ();
 };

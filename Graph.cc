@@ -1,7 +1,9 @@
 // Graph.c - Implementation of Graph class
 #include <octave/oct.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <string>
 #include <map>
 
 using namespace std;
@@ -41,14 +43,19 @@ Graph::Graph (const Matrix &adj_rules) {
   this->order = this->adj_list->size();
 }
 
-void Graph::print_graph () {
+string Graph::print_graph () {
+
+  std::stringstream out;
+  out << endl << "{" << endl;
   graph_itor node_itor = this->adj_list->begin();
   for (; node_itor != this->adj_list->end(); ++node_itor) {
-    cout << node_itor->first <<": ";
+    out << "   " << node_itor->first <<": ";
     vector<int>::iterator adj_itor = node_itor->second->begin();
     for (; adj_itor != node_itor->second->end(); ++adj_itor) {
-      cout << *adj_itor << " ";
+      out << *adj_itor << " ";
     }
-    cout << endl;
+    out << endl;
   }
+  out << "}" << endl;
+  return out.str();
 }

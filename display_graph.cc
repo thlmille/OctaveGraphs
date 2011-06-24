@@ -11,7 +11,6 @@ DEFUN_DLD(display_graph, args, ,
     return octave_value_list();
   Matrix b(args(0).matrix_value());
   Graph G(b);
-  G.print_graph();
-  return octave_value(0);
+  return octave_value(G.print_graph());
 
 }
