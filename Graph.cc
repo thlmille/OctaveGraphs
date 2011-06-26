@@ -44,7 +44,6 @@ Graph::Graph (const Matrix &adj_rules) {
 }
 
 string Graph::print_graph () {
-
   std::stringstream out;
   out << endl << "{" << endl;
   graph_itor node_itor = this->adj_list->begin();
@@ -58,4 +57,14 @@ string Graph::print_graph () {
   }
   out << "}" << endl;
   return out.str();
+}
+
+RowVector Graph::adj (int node) {
+  int num_adj_nodes = (*adj_list)[node]->size();
+  RowVector adj_vector(num_adj_nodes);
+  vector<int>::iterator itor = (*adj_list)[node]->begin();
+  for (int i = 0; itor != (*adj_list)[node]->end(); ++itor, ++i) {
+    adj_vector(i) = *itor;
+  }
+  return adj_vector;
 }

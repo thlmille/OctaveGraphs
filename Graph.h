@@ -17,4 +17,5 @@ class Graph {
  public:
   Graph (const Matrix &adj_rules);
   string print_graph ();
+  RowVector adj (int node);
 };

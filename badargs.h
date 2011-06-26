@@ -5,4 +5,17 @@
 // if its arguments are valid. This functions may be built of several
 // smaller ones in this file.
 
-static bool invalid_display_graph (const octave_value_list &args);
+using namespace std;
+
+#if !defined(_BADARGS_H_)
+#define _BADARGS_H_
+
+#include <octave/oct.h>
+
+bool invalid_display_graph (const octave_value_list &args);
+
+bool invalid_adj (const octave_value_list &args);
+
+bool contains_node (const octave_value_list &args);
+
+#endif
