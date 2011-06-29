@@ -16,6 +16,10 @@ bool invalid_display_graph (const octave_value_list &args);
 
 bool invalid_adj (const octave_value_list &args);
 
-bool contains_node (const octave_value_list &args);
+bool contains_node (const Matrix &a, int node);
+
+bool invalid_get_path (const octave_value_list &args);
+
+bool all_integers (const Matrix &a);
 
 #endif
