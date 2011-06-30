@@ -15,7 +15,9 @@ class Graph {
   int order;
   map<int, vector<int>* > *adj_list;
  public:
+  ~Graph();
   Graph (const Matrix &adj_rules);
   string print_graph ();
   RowVector adj (int node);
+  RowVector get_path (int start, int end);
 };

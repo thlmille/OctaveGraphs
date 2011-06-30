@@ -43,6 +43,14 @@ Graph::Graph (const Matrix &adj_rules) {
   this->order = this->adj_list->size();
 }
 
+Graph::~Graph() {
+  graph_itor itor = this->adj_list->begin();
+  for (; itor != this->adj_list->end(); ++itor) {
+    delete itor->second;
+  }
+  delete this->adj_list;
+}
+
 string Graph::print_graph () {
   std::stringstream out;
   out << endl << "{" << endl;
@@ -68,3 +76,11 @@ RowVector Graph::adj (int node) {
   }
   return adj_vector;
 }
+
+// RowVector Graph::get_path(int start, int end) {
+//   vector<int>(this->order) color;
+//   vector<int>(this->order) distance;
+//   vector<int>(this->order) parent;
+
+//   int nil = 0;
+// }
