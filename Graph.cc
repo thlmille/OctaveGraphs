@@ -4,12 +4,16 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <queue>
+#include <stack>
+#include <utility>
 #include <map>
 
 using namespace std;
 
 #include "Graph.h"
 
+#define nil -1
 typedef map<int, vector<int>* >::iterator graph_itor;
 
 // Graph constructor. Takes in a matrix of adjacency rules and
@@ -77,10 +81,66 @@ RowVector Graph::adj (int node) {
   return adj_vector;
 }
 
-// RowVector Graph::get_path(int start, int end) {
-//   vector<int>(this->order) color;
-//   vector<int>(this->order) distance;
-//   vector<int>(this->order) parent;
+pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
+  map<int, int> color; // 0 = white, 1 = gray, 2 = black
+  map<int, int> distance;
+  map<int, int> parent;
+  graph_itor itor = this->adj_list->begin();
+  for (; itor != this->adj_list->end(); ++itor) {
+    parent[itor->first] = nil;
+    distance[itor->first] = nil;
+  }
+  distance[source] = 0;
+  parent[source] = nil;
+  queue<int> node_hold;
+  node_hold.push(source);
+  while (!node_hold.empty()) {
+    int curr_node = node_hold.front();
+    node_hold.pop();
+    vector<int>::iterator adj_itor = (*adj_list)[curr_node]->begin();
+    for (; adj_itor != (*adj_list)[curr_node]->end(); ++adj_itor) {
+      if (color[*adj_itor] == 0) {
+	color[*adj_itor] = 1;
+	distance[*adj_itor]++;
+	parent[*adj_itor] = curr_node;
+	node_hold.push(*adj_itor);
+      }
+    }
+    color[curr_node] = 2;
+  }
+  return make_pair (parent, distance);
+}
 
-//   int nil = 0;
-// }
+bool Graph::is_path(int start, int end) {
+  if (this->get_BFS_info(start).first[end] != nil) return true;
+  return false;
+}
+
+RowVector Graph::get_path(int start, int end) {
+  map <int, int> parent = this->get_BFS_info(start).first;
+  if (parent[end] == nil) {
+    RowVector no_path(1);
+    no_path(0) = nil;
+    return no_path;
+  }
+  stack<int> path_stack;
+  int curr_node = end;
+  while (curr_node != start) {
+    path_stack.push(curr_node);
+    curr_node = parent[curr_node];
+  }
+  path_stack.push(start);
+  RowVector path(path_stack.size());
+  int i = 0;
+  while (!path_stack.empty()) {
+    path(i) = path_stack.top();
+    path_stack.pop();
+    ++i;
+  }
+  return path;
+}
+
+int Graph::get_steps(int start, int end) {
+  map<int, int> distance = this->get_BFS_info(start).second;
+  return distance[end];
+}

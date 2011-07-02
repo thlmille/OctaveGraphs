@@ -18,6 +18,9 @@ class Graph {
   ~Graph();
   Graph (const Matrix &adj_rules);
   string print_graph ();
+  pair<map<int, int>, map<int, int> > get_BFS_info (int source);
   RowVector adj (int node);
   RowVector get_path (int start, int end);
+  bool is_path (int start, int end);
+  int get_steps (int start, int end);
 };

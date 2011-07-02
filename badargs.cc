@@ -15,11 +15,13 @@ bool invalid_display_graph (const octave_value_list& args) {
     return true;
   }
   if (!all_integers(args(0).matrix_value())) {
-    error("display_graph: nodes must be specified by integers");
+    error("display_graph: nodes must be specified by integers \
+greater than 0");
     return true;
   }
   if (args(0).columns() != 2 && args(0).columns() != 3) {
-    error("display_graph: expecting each row of matrix to specify an adjacency rule");
+    error("display_graph: expecting each row of matrix to specify \
+an adjacency rule");
     return true;
   }
   return false;
@@ -35,7 +37,7 @@ bool invalid_adj (const octave_value_list& args) {
     return true;
   }
   if (!all_integers(args(0).matrix_value())) {
-    error("adj: nodes must be specified by integers");
+    error("adj: nodes must be specified by integers greater than 0");
     return true;
   }
   if (!args(1).is_real_scalar()) {
@@ -56,6 +58,10 @@ bool invalid_get_path (const octave_value_list &args) {
   }
   if (!args(0).is_real_matrix()) {
     error("get_path: expecting first argument to be a real matrix");
+    return true;
+  }
+  if (!all_integers(args(0).matrix_value())) {
+    error("get_path: nodes must be specifie be integer greater than 0");
     return true;
   }
   if (!args(1).is_real_scalar()) {
@@ -91,6 +97,7 @@ bool all_integers (const Matrix& a) {
     for (int j = 0; j < a.columns(); ++j) {
       int hold = a(i,j);
       if (hold != a(i,j)) return false;
+      if (a(i,j) < 1) return false;
     }
   }
   return true;

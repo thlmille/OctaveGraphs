@@ -1,3 +1,6 @@
+get_path : Graph.cc badargs.cc
+	./makeoct.pl get_path.cc
+
 display_graph : Graph.cc badargs.cc
 	./makeoct.pl display_graph.cc
 
