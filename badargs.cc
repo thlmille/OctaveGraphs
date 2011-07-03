@@ -83,6 +83,70 @@ bool invalid_get_path (const octave_value_list &args) {
   return false;
 }
 
+bool invalid_get_steps (const octave_value_list &args) {
+  if (args.length() != 3) {
+    error("get_steps: expecting a graph matrix and two real numbers as arguments");
+    return true;
+  }
+  if (!args(0).is_real_matrix()) {
+    error("get_steps: expecting first argument to be a real matrix");
+    return true;
+  }
+  if (!all_integers(args(0).matrix_value())) {
+    error("get_steps: nodes must be specifie be integer greater than 0");
+    return true;
+  }
+  if (!args(1).is_real_scalar()) {
+    error("get_steps: expecting second argument to be an integer");
+    return true;
+  }
+  if (!args(2).is_real_scalar()) {
+    error("get_steps: expecting third argument to be an integer");
+    return true;
+  }
+  if (!contains_node(args(0).matrix_value(), args(1).int_value())) {
+    error("get_steps: node does not exist");
+    return true;
+  }
+  if (!contains_node(args(0).matrix_value(), args(2).int_value())) {
+    error("get_steps: node does not exist");
+    return true;
+  }
+  return false;
+}
+
+bool invalid_is_path (const octave_value_list &args) {
+  if (args.length() != 3) {
+    error("is_path: expecting a graph matrix and two real numbers as arguments");
+    return true;
+  }
+  if (!args(0).is_real_matrix()) {
+    error("is_path: expecting first argument to be a real matrix");
+    return true;
+  }
+  if (!all_integers(args(0).matrix_value())) {
+    error("is_path: nodes must be specifie be integer greater than 0");
+    return true;
+  }
+  if (!args(1).is_real_scalar()) {
+    error("is_path: expecting second argument to be an integer");
+    return true;
+  }
+  if (!args(2).is_real_scalar()) {
+    error("is_path: expecting third argument to be an integer");
+    return true;
+  }
+  if (!contains_node(args(0).matrix_value(), args(1).int_value())) {
+    error("is_path: node does not exist");
+    return true;
+  }
+  if (!contains_node(args(0).matrix_value(), args(2).int_value())) {
+    error("is_path: node does not exist");
+    return true;
+  }
+  return false;
+}
+
 bool contains_node (const Matrix& a, int node) {
   for (int i = 0; i < a.rows(); ++i) {
     for (int j = 0; j < a.columns(); ++j) {

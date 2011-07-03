@@ -101,7 +101,7 @@ pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
     for (; adj_itor != (*adj_list)[curr_node]->end(); ++adj_itor) {
       if (color[*adj_itor] == 0) {
 	color[*adj_itor] = 1;
-	distance[*adj_itor]++;
+	distance[*adj_itor] = distance[curr_node] + 1;
 	parent[*adj_itor] = curr_node;
 	node_hold.push(*adj_itor);
       }
