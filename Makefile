@@ -1,3 +1,9 @@
+is_path : Graph.cc badargs.cc
+	./makeoct.pl octfuncs/is_path.cc
+
+get_steps : Graph.cc badargs.cc
+	./makeoct.pl octfuncs/get_steps.cc
+
 get_path : Graph.cc badargs.cc
 	./makeoct.pl octfuncs/get_path.cc
 
@@ -10,3 +16,4 @@ adj : Graph.cc badargs.cc
 clean :
 	rm -f *.o *.oct
 	rm -f octfuncs/*.o
+
