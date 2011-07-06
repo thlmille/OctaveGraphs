@@ -12,6 +12,8 @@ using namespace std;
 
 #include <octave/oct.h>
 
+bool invalid_undirected (const octave_value_list &args);
+
 bool invalid_trans_graph (const octave_value_list &args);
 
 bool invalid_display_graph (const octave_value_list &args);
