@@ -5,8 +5,25 @@ using namespace std;
 
 #include "badargs.h"
 
+bool invalid_trans_graph (const octave_value_list& args) {
+  if (args.length() != 1) {
+    error("trans_graph: expecting only one argument");
+    return true;
+  }
+  if (!args(0).is_real_matrix()) {
+    error("trans_graph: expecting argument to be a real matrix");
+    return true;
+  }
+  if (!all_integers(args(0).matrix_value())) {
+    error("trans_graph: nodes must be specified by integers \
+greater than 0");
+    return true;
+  }
+  return false;
+}
+
 bool invalid_display_graph (const octave_value_list& args) {
-  if (args.length() > 1) {
+  if (args.length() != 1) {
     error("diplay_graph: expecting only one argument");
     return true;
   }
