@@ -47,6 +47,11 @@ Graph::Graph (const Matrix &adj_rules) {
   this->order = this->adj_list->size();
 }
 
+Graph::Graph() {
+  this->adj_list = new map<int, vector<int>* >;
+  this->order = 0;
+}
+
 Graph::~Graph() {
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
@@ -70,6 +75,18 @@ string Graph::print_graph () {
   out << "}" << endl;
   return out.str();
 }
+
+/*Graph Graph::transpose () {
+  Graph trans;
+  graph_itor original_itor = this->adj_list->begin();
+  for (; original_itor != this->adj_list->end(); ++original_itor) {
+    vector<int> orig_node_itor = original_itor->second->begin();
+    for (; orig_node_itor != original_itor->second->end(); 
+	 ++orig_node_itor) {
+      if ((*trans->adj_list)[
+  }
+
+}*/
 
 RowVector Graph::adj (int node) {
   int num_adj_nodes = (*adj_list)[node]->size();
@@ -109,6 +126,59 @@ pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
     color[curr_node] = 2;
   }
   return make_pair (parent, distance);
+}
+
+pair<map<int, int>, pair<map<int, int>, map<int, int> > > Graph::get_DFS_info
+(vector<int> node_order) {
+  map <int, int> color; // 0 = white, 1 = gray, 2 = black
+  map<int, int> parent;
+  map<int, int> start;
+  map <int, int> finish;
+  graph_itor itor = this->adj_list->begin();
+  for (; itor != this->adj_list->end(); ++itor) {
+    parent[itor->first] = nil;
+  }
+  int time = 0;
+  vector<int>::iterator node_itor = node_order.begin();
+  for (; node_itor != node_order.end(); ++node_itor) {
+    if (color[*node_itor] == 0) {
+      this->DFS_visit(*node_itor, &time, color, parent, start, finish);
+    }
+  }
+  return make_pair (parent, make_pair (start, finish));
+}
+
+void Graph::DFS_visit(int curr_node, int *time,  map<int, int> &color, 
+		      map<int, int>&parent, map<int, int> &start, 
+		      map<int, int> &finish) {
+  (*time)++;
+  start[curr_node] = *time;
+  color[curr_node] = 1;
+  vector<int>::iterator adj_itor = (*adj_list)[curr_node]->begin();
+  for (; adj_itor != (*adj_list)[curr_node]->end(); ++adj_itor) {
+    if (color[*adj_itor] == 0) {
+      parent[*adj_itor] = curr_node;
+      DFS_visit(*adj_itor, time, color, parent, start, finish);
+    }
+  }
+  color[curr_node] = 2;
+  (*time)++;
+  finish[curr_node] = *time;
+}
+
+RowVector Graph::con_components() {
+  RowVector a(this->adj_list->size());
+  vector<int> node_order;
+  graph_itor itor = this->adj_list->begin();
+  for (; itor != this->adj_list->end(); ++itor) {
+    node_order.push_back(itor->first);
+  }
+  map<int, int> finish = this->get_DFS_info(node_order).second.second;
+  map<int, int>::iterator fin_itor = finish.begin();
+  for (int i = 0; fin_itor != finish.end(); ++i, ++fin_itor) {
+    a(i) = fin_itor->second;
+  }
+  return a;
 }
 
 bool Graph::is_path(int start, int end) {
