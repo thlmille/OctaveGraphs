@@ -21,15 +21,17 @@ class Graph {
   ~Graph();
   Graph (const Matrix &adj_rules);
   Graph ();
+  Graph transpose();
   string print_graph ();
   pair<map<int, int>, map<int, int> > get_BFS_info (int source);
   pair<map<int, int>, pair<map<int, int>, map<int, int> > > 
      get_DFS_info (vector<int> node_order);
+  void DFS_visit (int, int*, map<int, int>&, map<int, int>&, map<int, int>&,
+		map<int, int>&);
   RowVector con_components();
   RowVector adj (int node);
   RowVector get_path (int start, int end);
   bool is_path (int start, int end);
   int get_steps (int start, int end);
-  void DFS_visit (int, int*, map<int, int>&, map<int, int>&, map<int, int>&,
-		map<int, int>&);
+
 };

@@ -76,17 +76,23 @@ string Graph::print_graph () {
   return out.str();
 }
 
-/*Graph Graph::transpose () {
+Graph Graph::transpose () {
   Graph trans;
   graph_itor original_itor = this->adj_list->begin();
   for (; original_itor != this->adj_list->end(); ++original_itor) {
-    vector<int> orig_node_itor = original_itor->second->begin();
-    for (; orig_node_itor != original_itor->second->end(); 
-	 ++orig_node_itor) {
-      if ((*trans->adj_list)[
+    vector<int>::iterator orig_node_itor = original_itor->second->begin();
+    for (; orig_node_itor != original_itor->second->end(); ++orig_node_itor) {
+      if ((*trans.adj_list)[*orig_node_itor] == NULL) {
+	vector<int> *new_nodes = new vector<int>;
+	new_nodes->push_back(original_itor->first);
+	(*trans.adj_list)[*orig_node_itor] = new_nodes;
+      } else {
+	(*trans.adj_list)[*orig_node_itor]->push_back(original_itor->first);
+      }
+    }
   }
-
-}*/
+  return trans;
+}
 
 RowVector Graph::adj (int node) {
   int num_adj_nodes = (*adj_list)[node]->size();
@@ -178,6 +184,8 @@ RowVector Graph::con_components() {
   for (int i = 0; fin_itor != finish.end(); ++i, ++fin_itor) {
     a(i) = fin_itor->second;
   }
+  Graph p = this->transpose();
+  cout << p.print_graph();
   return a;
 }
 
