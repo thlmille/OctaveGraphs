@@ -184,9 +184,31 @@ RowVector Graph::con_components() {
   for (int i = 0; fin_itor != finish.end(); ++i, ++fin_itor) {
     a(i) = fin_itor->second;
   }
-  Graph p = this->transpose();
-  cout << p.print_graph();
   return a;
+}
+
+bool sort_help (int i, int j) {return i < j;}
+
+RowVector Graph::top_sort() {
+  vector<int> node_order;
+  graph_itor itor = this->adj_list->begin();
+  for (; itor != this->adj_list->end(); ++itor) {
+    node_order.push_back(itor->first);
+  }
+  map<int, int> finish = this->get_DFS_info(node_order).second.second;
+  map<int, int> con_finish; // to map finish times to nodes
+  vector<int> finish_times;
+  map<int, int>::iterator fin_itor = finish.begin();
+  for (; fin_itor != finish.end(); ++fin_itor) {
+    con_finish[fin_itor->second] = fin_itor->first;
+    finish_times.push_back(fin_itor->second);
+  }
+  sort (finish_times.begin(), finish_times.end(), sort_help);
+  RowVector sorted(this->order);
+  for (int i = 0, j = this->order - 1; i < this->order; ++i, --j) {
+    sorted(i) = con_finish[finish_times[j]];
+  }
+  return sorted;
 }
 
 bool Graph::is_path(int start, int end) {

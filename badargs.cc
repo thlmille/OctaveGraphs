@@ -181,6 +181,28 @@ bool invalid_is_path (const octave_value_list &args) {
   return false;
 }
 
+bool invalid_top_sort (const octave_value_list& args) {
+  if (args.length() != 1) {
+    error("top_sort: expecting only one argument");
+    return true;
+  }
+  if (!args(0).is_real_matrix()) {
+    error("top_sort: expecting argument to be a real matrix");
+    return true;
+  }
+  if (!all_integers(args(0).matrix_value())) {
+    error("top_sort: nodes must be specified by integers \
+greater than 0");
+    return true;
+  }
+  if (args(0).columns() != 2 && args(0).columns() != 3) {
+    error("top_sort: expecting each row of matrix to specify \
+an adjacency rule");
+    return true;
+  }
+  return false;
+}
+
 bool contains_node (const Matrix& a, int node) {
   for (int i = 0; i < a.rows(); ++i) {
     for (int j = 0; j < a.columns(); ++j) {

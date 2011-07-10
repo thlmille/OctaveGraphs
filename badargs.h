@@ -26,6 +26,8 @@ bool invalid_is_path (const octave_value_list &args);
 
 bool invalid_get_steps (const octave_value_list &args);
 
+bool invalid_top_sort (const octave_value_list &args);
+
 bool all_integers (const Matrix &a);
 
 bool contains_node (const Matrix &a, int node);
