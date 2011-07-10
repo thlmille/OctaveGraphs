@@ -1,3 +1,9 @@
+top_sort : Graph.cc badargs.cc
+	./makeoct.pl octfuncs/top_sort.cc
+
+con_components : Graph.cc badargs.cc
+	./makeoct.pl octfuncs/con_components.cc
+
 is_path : Graph.cc badargs.cc
 	./makeoct.pl octfuncs/is_path.cc
 
