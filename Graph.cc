@@ -172,22 +172,48 @@ void Graph::DFS_visit(int curr_node, int *time,  map<int, int> &color,
   finish[curr_node] = *time;
 }
 
-RowVector Graph::con_components() {
-  RowVector a(this->adj_list->size());
+bool sort_help (int i, int j) {return i < j;}
+
+// Sort finish times in descending order
+vector<int> order_finish_times (const map<int, int> &finish) {
+  map<int, int> con_finish;
+  vector<int> finish_times;
+  map<int, int>::const_iterator fin_itor = finish.begin();
+  for (; fin_itor != finish.end(); ++fin_itor) {
+    con_finish[fin_itor->second] = fin_itor->first;
+    finish_times.push_back(fin_itor->second);
+  }
+  sort (finish_times.begin(), finish_times.end(), sort_help);
+  vector<int> sorted;
+  int i = 0;
+  int j = finish_times.size() - 1;
+  for (; i < finish_times.size(); ++i, --j) {
+    sorted.push_back(con_finish[finish_times[j]]);
+  }
+  return sorted;
+}
+
+octave_value_list Graph::con_components() {
   vector<int> node_order;
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     node_order.push_back(itor->first);
   }
   map<int, int> finish = this->get_DFS_info(node_order).second.second;
-  map<int, int>::iterator fin_itor = finish.begin();
-  for (int i = 0; fin_itor != finish.end(); ++i, ++fin_itor) {
-    a(i) = fin_itor->second;
+  vector<int> sorted = order_finish_times(finish);
+  Graph trans = this->transpose();
+  map<int, int> parents = trans.get_DFS_info(sorted).first;
+  int num_comps;
+  map<int, int>::iterator parent_itor = parents.begin();
+  for (; parent_itor != parents.end(); ++parent_itor) {
+    if (*parent_itor == nil) ++num_comps;
   }
-  return a;
-}
+  octave_value_list the_comps;
+  int curr_node = *parents.begin();
+  for (int i = 1; i <= num_comps; ++i) {
 
-bool sort_help (int i, int j) {return i < j;}
+  }
+}
 
 RowVector Graph::top_sort() {
   vector<int> node_order;
@@ -196,19 +222,12 @@ RowVector Graph::top_sort() {
     node_order.push_back(itor->first);
   }
   map<int, int> finish = this->get_DFS_info(node_order).second.second;
-  map<int, int> con_finish; // to map finish times to nodes
-  vector<int> finish_times;
-  map<int, int>::iterator fin_itor = finish.begin();
-  for (; fin_itor != finish.end(); ++fin_itor) {
-    con_finish[fin_itor->second] = fin_itor->first;
-    finish_times.push_back(fin_itor->second);
+  vector<int> sorted = order_finish_times (finish);
+  RowVector sorted_nodes(this->order);
+  for (int i = 0; i < this->order; ++i) {
+    sorted_nodes(i) = sorted[i];
   }
-  sort (finish_times.begin(), finish_times.end(), sort_help);
-  RowVector sorted(this->order);
-  for (int i = 0, j = this->order - 1; i < this->order; ++i, --j) {
-    sorted(i) = con_finish[finish_times[j]];
-  }
-  return sorted;
+  return sorted_nodes;
 }
 
 bool Graph::is_path(int start, int end) {
