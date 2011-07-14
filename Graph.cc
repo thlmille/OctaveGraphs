@@ -134,63 +134,45 @@ pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
   return make_pair (parent, distance);
 }
 
-pair<map<int, int>, pair<map<int, int>, map<int, int> > > Graph::get_DFS_info
+pair<map<int, int>, vector<int> > Graph::get_DFS_info
 (vector<int> node_order) {
   map <int, int> color; // 0 = white, 1 = gray, 2 = black
   map<int, int> parent;
-  map<int, int> start;
-  map <int, int> finish;
+  vector<int> fin_order;
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     parent[itor->first] = nil;
   }
-  int time = 0;
   vector<int>::iterator node_itor = node_order.begin();
   for (; node_itor != node_order.end(); ++node_itor) {
     if (color[*node_itor] == 0) {
-      this->DFS_visit(*node_itor, &time, color, parent, start, finish);
+      this->DFS_visit(*node_itor, color, parent, fin_order);
     }
   }
-  return make_pair (parent, make_pair (start, finish));
+  return make_pair (parent, fin_order);
 }
 
-void Graph::DFS_visit(int curr_node, int *time,  map<int, int> &color, 
-		      map<int, int>&parent, map<int, int> &start, 
-		      map<int, int> &finish) {
-  (*time)++;
-  start[curr_node] = *time;
+void Graph::DFS_visit(int curr_node, map<int, int> &color, 
+		      map<int, int> &parent, vector<int> &fin_order) {
   color[curr_node] = 1;
   vector<int>::iterator adj_itor = (*adj_list)[curr_node]->begin();
   for (; adj_itor != (*adj_list)[curr_node]->end(); ++adj_itor) {
     if (color[*adj_itor] == 0) {
       parent[*adj_itor] = curr_node;
-      DFS_visit(*adj_itor, time, color, parent, start, finish);
+      DFS_visit(*adj_itor, color, parent, fin_order);
     }
   }
   color[curr_node] = 2;
-  (*time)++;
-  finish[curr_node] = *time;
+  fin_order.push_back(curr_node);
 }
 
-bool sort_help (int i, int j) {return i < j;}
-
-// Sort finish times in descending order
-vector<int> order_finish_times (const map<int, int> &finish) {
-  map<int, int> con_finish;
-  vector<int> finish_times;
-  map<int, int>::const_iterator fin_itor = finish.begin();
-  for (; fin_itor != finish.end(); ++fin_itor) {
-    con_finish[fin_itor->second] = fin_itor->first;
-    finish_times.push_back(fin_itor->second);
+// Make a row vector from a c++ vector
+RowVector getRowVector(vector<int> from) {
+  RowVector ret(from.size());
+  for (int i = 0; i < from.size(); ++i) {
+    ret(i) = from[i];
   }
-  sort (finish_times.begin(), finish_times.end(), sort_help);
-  vector<int> sorted;
-  int i = 0;
-  int j = finish_times.size() - 1;
-  for (; i < finish_times.size(); ++i, --j) {
-    sorted.push_back(con_finish[finish_times[j]]);
-  }
-  return sorted;
+  return ret;
 }
 
 octave_value_list Graph::con_components() {
@@ -199,20 +181,27 @@ octave_value_list Graph::con_components() {
   for (; itor != this->adj_list->end(); ++itor) {
     node_order.push_back(itor->first);
   }
-  map<int, int> finish = this->get_DFS_info(node_order).second.second;
-  vector<int> sorted = order_finish_times(finish);
-  Graph trans = this->transpose();
-  map<int, int> parents = trans.get_DFS_info(sorted).first;
-  int num_comps;
-  map<int, int>::iterator parent_itor = parents.begin();
-  for (; parent_itor != parents.end(); ++parent_itor) {
-    if (*parent_itor == nil) ++num_comps;
+  vector<int> first_order = this->get_DFS_info(node_order).second;
+  for (int i = this->order - 1; i >= 0; --i) {
+    node_order[i - this->order + 1] = first_order[i];
   }
-  octave_value_list the_comps;
-  int curr_node = *parents.begin();
-  for (int i = 1; i <= num_comps; ++i) {
-
+  pair< map<int, int> , vector<int> >final_info = 
+    this->get_DFS_info(node_order);
+  map<int, int> parent = final_info.first;
+  vector<int> final_order = final_info.second;
+  octave_value_list con_comps;
+  vector<int>::reverse_iterator fin_itor = final_order.rbegin();
+  for (int num_comps = 1; ; ++num_comps) {
+    vector<int> hold;
+    while (parent[*fin_itor] != nil && fin_itor != final_order.rend()) {
+      hold.push_back(*fin_itor);
+      ++fin_itor;
+    }
+    con_comps(num_comps) = getRowVector(hold);
+    if (fin_itor == final_order.rend()) break;
+    ++fin_itor;
   }
+  return con_comps;
 }
 
 RowVector Graph::top_sort() {
@@ -221,11 +210,10 @@ RowVector Graph::top_sort() {
   for (; itor != this->adj_list->end(); ++itor) {
     node_order.push_back(itor->first);
   }
-  map<int, int> finish = this->get_DFS_info(node_order).second.second;
-  vector<int> sorted = order_finish_times (finish);
+  vector<int> fin_order = this->get_DFS_info(node_order).second;
   RowVector sorted_nodes(this->order);
   for (int i = 0; i < this->order; ++i) {
-    sorted_nodes(i) = sorted[i];
+    sorted_nodes(i) = fin_order[this->order - i - 1];
   }
   return sorted_nodes;
 }
