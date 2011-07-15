@@ -166,7 +166,7 @@ void Graph::DFS_visit(int curr_node, map<int, int> &color,
   fin_order.push_back(curr_node);
 }
 
-// Make a row vector from a c++ vector
+// Make an Octave RowVector from a c++ vector
 RowVector getRowVector(vector<int> from) {
   RowVector ret(from.size());
   for (int i = 0; i < from.size(); ++i) {
@@ -190,16 +190,17 @@ octave_value_list Graph::con_components() {
   map<int, int> parent = final_info.first;
   vector<int> final_order = final_info.second;
   octave_value_list con_comps;
-  vector<int>::reverse_iterator fin_itor = final_order.rbegin();
-  for (int num_comps = 1; ; ++num_comps) {
+  vector<int>::iterator fin_itor = final_order.begin();
+  for (int num_comps = 0; ; ++num_comps) {
     vector<int> hold;
-    while (parent[*fin_itor] != nil && fin_itor != final_order.rend()) {
+    for (;;) {
       hold.push_back(*fin_itor);
+      if (parent[*fin_itor] == nil) break;
       ++fin_itor;
     }
     con_comps(num_comps) = getRowVector(hold);
-    if (fin_itor == final_order.rend()) break;
     ++fin_itor;
+    if (fin_itor == final_order.end()) break;
   }
   return con_comps;
 }
