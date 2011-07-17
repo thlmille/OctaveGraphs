@@ -22,7 +22,7 @@ class Graph {
   Graph (const Matrix &adj_rules);
   Graph ();
   Graph transpose();
-  string print_graph ();
+  string display_graph ();
   pair<map<int, int>, map<int, int> > get_BFS_info (int source);
   pair<map<int, int>, vector<int> > 
           get_DFS_info (vector<int> node_order);

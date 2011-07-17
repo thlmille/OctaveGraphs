@@ -60,7 +60,7 @@ Graph::~Graph() {
   delete this->adj_list;
 }
 
-string Graph::print_graph () {
+string Graph::display_graph () {
   std::stringstream out;
   out << endl << "{" << endl;
   graph_itor node_itor = this->adj_list->begin();
@@ -97,6 +97,8 @@ Graph Graph::transpose () {
 RowVector Graph::adj (int node) {
   int num_adj_nodes = (*adj_list)[node]->size();
   RowVector adj_vector(num_adj_nodes);
+
+  // Copy Nodes from vector pointer to RowVector
   vector<int>::iterator itor = (*adj_list)[node]->begin();
   for (int i = 0; itor != (*adj_list)[node]->end(); ++itor, ++i) {
     adj_vector(i) = *itor;
@@ -108,6 +110,8 @@ pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
   map<int, int> color; // 0 = white, 1 = gray, 2 = black
   map<int, int> distance;
   map<int, int> parent;
+
+  // Initialize vertices
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     parent[itor->first] = nil;
@@ -117,6 +121,8 @@ pair<map<int, int>, map<int, int> > Graph::get_BFS_info (int source) {
   parent[source] = nil;
   queue<int> node_hold;
   node_hold.push(source);
+
+  // Main loop of BFS
   while (!node_hold.empty()) {
     int curr_node = node_hold.front();
     node_hold.pop();
@@ -139,10 +145,14 @@ pair<map<int, int>, vector<int> > Graph::get_DFS_info
   map <int, int> color; // 0 = white, 1 = gray, 2 = black
   map<int, int> parent;
   vector<int> fin_order;
+
+  // Initialize Vertices
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     parent[itor->first] = nil;
   }
+
+  // Main loop of DFS
   vector<int>::iterator node_itor = node_order.begin();
   for (; node_itor != node_order.end(); ++node_itor) {
     if (color[*node_itor] == 0) {
@@ -176,12 +186,15 @@ RowVector getRowVector(vector<int> from) {
 }
 
 octave_value_list Graph::con_components() {
+  // Run DFS First Time
   vector<int> node_order;
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     node_order.push_back(itor->first);
   }
   vector<int> first_order = this->get_DFS_info(node_order).second;
+
+  // Run DFS Second Time
   for (int i = this->order - 1; i >= 0; --i) {
     node_order[i - this->order + 1] = first_order[i];
   }
@@ -189,6 +202,8 @@ octave_value_list Graph::con_components() {
     this->get_DFS_info(node_order);
   map<int, int> parent = final_info.first;
   vector<int> final_order = final_info.second;
+
+  // Assemble List of Connected Components
   octave_value_list con_comps;
   vector<int>::iterator fin_itor = final_order.begin();
   for (int num_comps = 0; ; ++num_comps) {
@@ -206,12 +221,15 @@ octave_value_list Graph::con_components() {
 }
 
 RowVector Graph::top_sort() {
+  // Run DFS
   vector<int> node_order;
   graph_itor itor = this->adj_list->begin();
   for (; itor != this->adj_list->end(); ++itor) {
     node_order.push_back(itor->first);
   }
   vector<int> fin_order = this->get_DFS_info(node_order).second;
+
+  // Put nodes into RowVector
   RowVector sorted_nodes(this->order);
   for (int i = 0; i < this->order; ++i) {
     sorted_nodes(i) = fin_order[this->order - i - 1];
@@ -225,12 +243,15 @@ bool Graph::is_path(int start, int end) {
 }
 
 RowVector Graph::get_path(int start, int end) {
+  // Run BFS
   map <int, int> parent = this->get_BFS_info(start).first;
   if (parent[end] == nil) {
     RowVector no_path(1);
     no_path(0) = nil;
     return no_path;
   }
+
+  // Push Vertices onto Stack
   stack<int> path_stack;
   int curr_node = end;
   while (curr_node != start) {
@@ -238,6 +259,8 @@ RowVector Graph::get_path(int start, int end) {
     curr_node = parent[curr_node];
   }
   path_stack.push(start);
+
+  // Unload Stack into RowVector
   RowVector path(path_stack.size());
   int i = 0;
   while (!path_stack.empty()) {
