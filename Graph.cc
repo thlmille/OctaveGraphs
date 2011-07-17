@@ -195,11 +195,8 @@ octave_value_list Graph::con_components() {
   vector<int> first_order = this->get_DFS_info(node_order).second;
 
   // Run DFS Second Time
-  for (int i = this->order - 1; i >= 0; --i) {
-    node_order[i - this->order + 1] = first_order[i];
-  }
   pair< map<int, int> , vector<int> >final_info = 
-    this->get_DFS_info(node_order);
+    this->get_DFS_info(first_order);
   map<int, int> parent = final_info.first;
   vector<int> final_order = final_info.second;
 
@@ -213,7 +210,7 @@ octave_value_list Graph::con_components() {
       if (parent[*fin_itor] == nil) break;
       ++fin_itor;
     }
-    con_comps(num_comps) = getRowVector(hold);
+    con_comps.append(getRowVector(hold));
     ++fin_itor;
     if (fin_itor == final_order.end()) break;
   }
