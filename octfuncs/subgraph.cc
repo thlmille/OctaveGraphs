@@ -26,6 +26,9 @@ DEFUN_DLD(subgraph, args, ,
 	  "Return an edge matrix that represents the given graph's \
 subgraph containing only the nodes in the given row vector") {
 
+  if (not_one_edge_matrix_one_row_vector(args, "subgraph"))
+    return octave_value_list();
+
   Matrix in_graph = args(0).matrix_value();
   Matrix temp = args(1).matrix_value();
   RowVector nodes = temp.row(0);

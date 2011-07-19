@@ -7,7 +7,7 @@ using namespace std;
 
 DEFUN_DLD(trans_graph, args, ,
 	  "Return the transpose of the given graph") {
-  if (invalid_trans_graph(args))
+  if (not_one_edge_matrix(args, "trans_graph"))
     return octave_value_list();
   Matrix in_graph(args(0).matrix_value());
   int temp;

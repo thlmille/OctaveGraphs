@@ -8,6 +8,8 @@ using namespace std;
 DEFUN_DLD(con_components, args, ,
 	  "Returns a list of row vectors that are the strongly \
 connected components of the given graph.") {
+  if (not_one_edge_matrix(args, "con_components"))
+    return octave_value_list();
   Graph G(args(0).matrix_value());
 
   // This extra step stops the seg_faults on exit, I haven't

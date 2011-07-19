@@ -8,8 +8,10 @@ using namespace std;
 DEFUN_DLD(undirected, args, ,
        "Return undirected version of given graph by naively \
 adding the reverse of every edge") {
-  if (invalid_undirected(args))
+
+  if (not_one_edge_matrix(args, "undirected"))
     return octave_value_list();
+
   Matrix in_graph(args(0).matrix_value());
   Matrix undir_graph(2 * in_graph.rows(), in_graph.columns());
   for (int i = 0; i < in_graph.rows(); ++i) {

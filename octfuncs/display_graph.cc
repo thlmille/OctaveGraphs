@@ -7,7 +7,7 @@ using namespace std;
 
 DEFUN_DLD(display_graph, args, , 
 	  "Show the adjacency list representation of a graph.") {
-  if (invalid_display_graph(args)) 
+  if (not_one_edge_matrix(args, "display_graph"))
     return octave_value_list();
   Matrix b(args(0).matrix_value());
   Graph G(b);
