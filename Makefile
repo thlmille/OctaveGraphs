@@ -1,3 +1,12 @@
+closure : Graph.cc badargs.cc
+	./makeoct.pl octfuncs/closure.cc
+
+undirected : octfuncs/undirected.cc
+	echo "mkoctfile octfuncs/undirected.cc" | octave
+
+subgraph : octfuncs/subgraph.cc
+	echo "mkoctfile octfuncs/subgraph.cc" | octave
+
 top_sort : Graph.cc badargs.cc
 	./makeoct.pl octfuncs/top_sort.cc
 

@@ -272,3 +272,19 @@ int Graph::get_steps(int start, int end) {
   map<int, int> distance = this->get_BFS_info(start).second;
   return distance[end];
 }
+
+RowVector Graph::closure(int source) {
+  map<int, int> parent = this->get_BFS_info(source).first;
+  RowVector nodes;
+
+  // Add each node to that can be reached to nodes row vector
+  map<int, int>::iterator itor = parent.begin();
+  for (; itor != parent.end(); ++itor) {
+    if (itor->second != nil) {
+      RowVector j(1);
+      j(0) = itor->first;
+      nodes = nodes.append(j);
+    }
+  }
+  return nodes;
+}

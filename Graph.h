@@ -33,4 +33,5 @@ class Graph {
   bool is_path (int start, int end);
   int get_steps (int start, int end);
   RowVector top_sort();
+  RowVector closure (int source);
 };
