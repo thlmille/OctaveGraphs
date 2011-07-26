@@ -1,32 +1,14 @@
-closure : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/closure.cc
+octfiles = adj.oct closure.oct con_components.oct \
+display_graph.oct get_path.oct get_steps.oct is_path.oct \
+subgraph.oct top_sort.oct trans_graph.oct undirected.oct
 
-undirected : octfuncs/undirected.cc
-	echo "mkoctfile octfuncs/undirected.cc" | octave
+all : ${octfiles}
 
-subgraph : octfuncs/subgraph.cc
-	echo "mkoctfile octfuncs/subgraph.cc" | octave
+%.oct : octfuncs/%.cc Graph.o badargs.o
+	mkoctfile $^
 
-top_sort : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/top_sort.cc
-
-con_components : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/con_components.cc
-
-is_path : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/is_path.cc
-
-get_steps : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/get_steps.cc
-
-get_path : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/get_path.cc
-
-display_graph : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/display_graph.cc
-
-adj : Graph.cc badargs.cc
-	./makeoct.pl octfuncs/adj.cc
+%.o: %.cc
+	mkoctfile -c $<
 
 clean :
 	rm -f *.o *.oct
