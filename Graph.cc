@@ -13,9 +13,6 @@ using namespace std;
 
 #include "Graph.h"
 
-#define nil -1
-typedef map<int, vector<int>* >::iterator graph_itor;
-
 // Graph constructor. Takes in a matrix of adjacency rules and
 // builds the adjacency list for the given graph. A matrix of m rows
 // is interpreted as a graph with m edges, specified by the first two

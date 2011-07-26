@@ -10,8 +10,8 @@
 #include <vector>
 #include <map>
 
-void DFS_visit (int, int*, map<int, int>&, map<int, int>&, map<int, int>&,
-		map<int, int>&);
+#define nil -1
+typedef map<int, vector<int>* >::iterator graph_itor;
 
 class Graph {
  private: 
