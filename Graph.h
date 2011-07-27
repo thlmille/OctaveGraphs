@@ -14,7 +14,7 @@
 typedef map<int, vector<int>* >::iterator graph_itor;
 
 class Graph {
- private: 
+ protected:
   int order;
   map<int, vector<int>* > *adj_list;
  public:
@@ -34,4 +34,7 @@ class Graph {
   int get_steps (int start, int end);
   RowVector top_sort();
   RowVector closure (int source);
+  int get_order();
+  map <int, vector<int> * > get_adj_list ();
+
 };
