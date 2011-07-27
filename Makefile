@@ -4,7 +4,7 @@ subgraph.oct top_sort.oct trans_graph.oct undirected.oct
 
 all : ${octfiles}
 
-%.oct : octfuncs/%.cc Graph.o badargs.o
+%.oct : octfuncs/%.cc weightedGraph.o Graph.o badargs.o
 	mkoctfile $^
 
 %.o: %.cc
