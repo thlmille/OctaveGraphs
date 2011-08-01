@@ -16,5 +16,12 @@ class weightedGraph: public Graph {
   weightedGraph (Graph &G);
   void assign_weights (const Matrix &adj_rules);
   ~weightedGraph ();
-
+  pair< map<int, int>, map<int, double> > 
+  get_dijkstra_info (int source);
+  void relax (int u, int v, map<int, int> &parent,
+	      map <int, pair<int, double>* > &node_handles);
+  double weight(int a, int b);
+  void initialize_shortest_paths(map<int, int> &parent,
+				 map<int, double> &distance,
+				 int source);
 };
