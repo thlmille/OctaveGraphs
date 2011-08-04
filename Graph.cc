@@ -57,6 +57,19 @@ Graph::~Graph() {
   delete this->adj_list;
 }
 
+int Graph::get_order() {
+  return this->order;
+}
+
+map <int, vector<int> * > Graph::get_adj_list() {
+  map <int, vector<int> *> copy;
+  graph_itor it = this->adj_list->begin();
+  for (; it != this->adj_list->end(); ++it) {
+    copy[it->first] = new vector<int>(*it->second);
+  }
+  return copy;
+}
+
 string Graph::display_graph () {
   std::stringstream out;
   out << endl << "{" << endl;

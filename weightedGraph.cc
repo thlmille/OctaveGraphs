@@ -18,14 +18,6 @@ weightedGraph::weightedGraph (Graph &G) {
   this->order = G.get_order();
 }
 
-weightedGraph::~weightedGraph() {
-  graph_itor itor = this->adj_list->begin();
-  for (; itor != this->adj_list->end(); ++itor) {
-    delete itor->second;
-  }
-  delete this->adj_list;
-}
-
 void weightedGraph::assign_weights (const Matrix &adj_rules) {
   map< pair<int, int>, double> weights;
   for (int i = 0; i < adj_rules.rows(); ++i) {
@@ -34,6 +26,8 @@ void weightedGraph::assign_weights (const Matrix &adj_rules) {
   }
   this->edge_weights = weights;
 }
+
+weightedGraph::~weightedGraph () {}
 
 double weightedGraph::weight (int a, int b) {
   return this->edge_weights[make_pair(a, b)];
@@ -66,14 +60,16 @@ void weightedGraph::initialize_shortest_paths (map<int, int> &parent,
   distance[source] = 0;
 }
 
-// Support class for std::priority_queue that gives smallest
+// Support class for make_heap that gives smallest
 //   numbers the highest priority and nil the lowest
 class smallfirst {
 public:
   bool operator() (pair<int, double> *a, pair<int, double> *b) {
-    if (a->second == nil) return false;
-    if (a->second < b->second) return false;
-    return true;
+    if (a->second == nil) return true;
+
+    if (b->second == nil) return false;
+    if (a->second > b->second) return true;
+    return false;
   }
 };
 
@@ -103,7 +99,8 @@ weightedGraph::get_dijkstra_info (int source) {
 
   // main loop of dijkstra
   while (!node_heap.empty()) {
-    int curr_node = node_heap.back()->first;
+    int curr_node = node_heap.front()->first;
+    pop_heap (node_heap.begin(), node_heap.end(), smallfirst());
     node_heap.pop_back();
     vector<int>::iterator node_it = 
       (*adj_list)[curr_node]->begin();
@@ -117,7 +114,12 @@ weightedGraph::get_dijkstra_info (int source) {
   map<int, pair<int, double>* >::iterator fin_it = node_handles.begin();
   for (; fin_it != node_handles.end(); ++fin_it) {
     distance[fin_it->first] = fin_it->second->second;
+    delete fin_it->second;
   }
+
   return make_pair (parent, distance);
 }
 
+double weightedGraph::get_dist (int start, int end) {
+  return this->get_dijkstra_info(start).second[end];
+}
