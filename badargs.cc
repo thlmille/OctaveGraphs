@@ -122,7 +122,21 @@ than 0").c_str());
   return false;
 }
 
-bool contains_node (const Matrix& a, int node) {
+bool not_dijkstra_valid(const octave_value_list &args,
+			const string &which) {
+  if (not_one_edge_matrix_two_nodes(args, which)) return true;
+  if (args(0).matrix_value().columns() != 3) {
+    error((which + ": expecting first argument to be a weighted graph").c_str());
+    return true;
+  }
+  if (!positive_weights(args(0).matrix_value())) {
+    error((which + ": edge weights must be greater than 0").c_str());
+    return true;
+  }
+  return false;
+}
+
+bool contains_node (const Matrix &a, int node) {
   for (int i = 0; i < a.rows(); ++i) {
     for (int j = 0; j < a.columns(); ++j) {
       if (a(i, j) == node) return true;
@@ -131,13 +145,20 @@ bool contains_node (const Matrix& a, int node) {
   return false;
 }
 
-bool all_integers (const Matrix& a) {
+bool all_integers (const Matrix &a) {
   for (int i = 0; i < a.rows(); ++i) {
-    for (int j = 0; j < a.columns(); ++j) {
+    for (int j = 0; j < 2; ++j) {
       int hold = a(i,j);
       if (hold != a(i,j)) return false;
       if (a(i,j) < 1) return false;
     }
+  }
+  return true;
+}
+
+bool positive_weights (const Matrix &a) {
+  for (int i = 0; i < a.columns(); ++i) {
+    if (a(i, 2) < 0) return false;
   }
   return true;
 }
