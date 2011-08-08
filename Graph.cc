@@ -249,9 +249,8 @@ bool Graph::is_path(int start, int end) {
   return false;
 }
 
-RowVector Graph::get_path(int start, int end) {
-  // Run BFS
-  map <int, int> parent = this->get_BFS_info(start).first;
+RowVector parent_path(int start, int end, 
+		      map<int, int> &parent) {
   if (parent[end] == nil) {
     RowVector no_path(1);
     no_path(0) = nil;
@@ -276,6 +275,12 @@ RowVector Graph::get_path(int start, int end) {
     ++i;
   }
   return path;
+}
+
+RowVector Graph::get_path(int start, int end) {
+  // Run BFS
+  map <int, int> parent = this->get_BFS_info(start).first;
+  return parent_path(start, end, parent);
 }
 
 int Graph::get_steps(int start, int end) {

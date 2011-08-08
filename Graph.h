@@ -12,6 +12,7 @@
 
 #define nil -1
 typedef map<int, vector<int>* >::iterator graph_itor;
+RowVector parent_path (int start, int end, map<int, int> &parent);
 
 class Graph {
  protected:
