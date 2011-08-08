@@ -21,7 +21,9 @@ class weightedGraph: public Graph {
   void relax (int u, int v, map<int, int> &parent,
 	      map <int, pair<int, double>* > &node_handles);
   double weight(int a, int b);
-  void initialize_shortest_paths(map<int, int> &parent,
-				 map<int, double> &distance,
-				 int source);
+  void initialize_shortest_paths (map<int, int> &parent,
+				  map<int, double> &distance,
+				  int source);
+  double get_dist (int start, int end);
+  RowVector dijkstra_path(int start, int end);
 };

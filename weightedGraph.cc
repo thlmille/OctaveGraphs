@@ -123,3 +123,8 @@ weightedGraph::get_dijkstra_info (int source) {
 double weightedGraph::get_dist (int start, int end) {
   return this->get_dijkstra_info(start).second[end];
 }
+
+RowVector weightedGraph::dijkstra_path (int start, int end) {
+  map<int, int> parent = this->get_dijkstra_info(start).first;
+  return parent_path(start, end, parent);
+}
