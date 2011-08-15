@@ -25,5 +25,6 @@ class weightedGraph: public Graph {
 				  map<int, double> &distance,
 				  int source);
   double get_dist (int start, int end);
-  RowVector dijkstra_path(int start, int end);
+  RowVector dijkstra_path (int start, int end);
+  Matrix mst ();
 };

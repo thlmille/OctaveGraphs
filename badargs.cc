@@ -126,11 +126,26 @@ bool not_dijkstra_valid(const octave_value_list &args,
 			const string &which) {
   if (not_one_edge_matrix_two_nodes(args, which)) return true;
   if (args(0).matrix_value().columns() != 3) {
-    error((which + ": expecting first argument to be a weighted graph").c_str());
+    error((which + ": expecting first argument to be a weighted \
+graph").c_str());
     return true;
   }
   if (!positive_weights(args(0).matrix_value())) {
     error((which + ": edge weights must be greater than 0").c_str());
+    return true;
+  }
+  return false;
+}
+
+bool not_one_weighted_edge_matrix(const octave_value_list &args,
+				  const string &which) {
+  if (not_one_edge_matrix(args, which)) return true;
+  if (args(0).matrix_value().columns() != 3) {
+    error ((which + ": expecting weighted graph as argument").c_str());
+    return true;
+  }
+  if (!positive_weights(args(0).matrix_value())) {
+    error ((which + ": edge weights must be greater than 0").c_str());
     return true;
   }
   return false;

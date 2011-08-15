@@ -73,6 +73,9 @@ public:
   }
 };
 
+
+// Implementation of Dijkstra's Algorithm, relies on STL heap
+//   algorithms
 pair< map<int, int>, map<int, double> > 
 weightedGraph::get_dijkstra_info (int source) {
   // initialize
@@ -127,4 +130,69 @@ double weightedGraph::get_dist (int start, int end) {
 RowVector weightedGraph::dijkstra_path (int start, int end) {
   map<int, int> parent = this->get_dijkstra_info(start).first;
   return parent_path(start, end, parent);
+}
+
+
+// Implementation of Prim's algorithm for calculating a
+//   minimum spanning tree
+Matrix weightedGraph::mst () {
+  // Initialize values and pointers, use pointers like
+  //   in dijkstra's algorithm
+  vector<pair<int, double>* > node_heap;
+  map<int, pair<int, double>* > node_handles;
+  graph_itor it = this->adj_list->begin();
+  for (; it != this->adj_list->end(); ++it) {
+    pair <int, double>* temp = new pair <int, double>;
+    temp->first = it->first;
+    temp->second = nil;
+    node_heap.push_back(temp);
+    node_handles[it->first] = temp;
+  }
+  node_handles[this->adj_list->begin()->first]->second = 0;
+
+  make_heap(node_heap.begin(), node_heap.end(), smallfirst());
+
+  // Parent map to keep track of nodes
+  map <int, int> parent;
+
+  // Keep track of nodes that have been removed from heap
+  map <int, bool> out_heap;
+
+  // Main loop of Prim's mst algorithm
+  while (!node_heap.empty()) {
+    int curr_node = node_heap.front()->first;
+    pop_heap(node_heap.begin(), node_heap.end(), smallfirst());
+    node_heap.pop_back();
+    out_heap[curr_node] = true;
+    vector<int>::iterator node_it =
+      (*adj_list)[curr_node]->begin();
+    for (; node_it != (*adj_list)[curr_node]->end(); ++node_it) {
+      if (!out_heap[*node_it] &&
+	  this->weight(curr_node, *node_it) <
+	  node_handles[*node_it]->second ||
+	  node_handles[*node_it]->second == nil) {
+	parent[*node_it] = curr_node;
+	node_handles[*node_it]->second = this->weight(curr_node, *node_it);
+	make_heap(node_heap.begin(), node_heap.end(), smallfirst());
+      }
+    }
+  }
+
+  // Extract edges from parent map and return as matrix
+  vector<pair<int, int> > mst_edges;
+  map<int, int>::iterator pit = parent.begin();
+  for (; pit != parent.end(); ++pit) {
+    cout << pit->first << " " << pit->second << endl;
+    if (pit->second != nil) {
+      mst_edges.push_back(make_pair(pit->first, pit->second));
+    }
+  }
+
+  // Construct graph matrix
+  Matrix ret(mst_edges.size(), 2);
+  for (int i = 0; i < mst_edges.size(); ++i) {
+    ret(i, 0) = mst_edges[i].first;
+    ret(i, 1) = mst_edges[i].second;
+  }
+  return ret;
 }
